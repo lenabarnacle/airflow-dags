@@ -159,6 +159,18 @@ def load(transform_data: pd.DataFrame):
         session.commit()
 
 
+def __main__():
+    """
+    Функция для запуска
+    1. Получаем данные
+    2. Обрабатываем данные
+    3. Загружаем данные
+    """
+    extract_data = extract()
+    transform_data = transform(extract_data)
+    load(transform_data)
+
+
 dag = DAG(
     "airtable_all_products",
     description="Выгрузка данных по всем продуктам из Airtable",
@@ -170,3 +182,7 @@ dag = DAG(
         "owner": "Brovko.NS",
     },
 )
+
+etl = PythonOperator(task_id="etl", python_callable=__main__, dag=dag)
+
+etl
