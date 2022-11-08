@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List
 
 import pandas as pd
@@ -180,6 +180,11 @@ dag = DAG(
     default_args={
         "on_failure_callback": on_failure_callback,
         "owner": "Brovko.NS",
+        "sla": timedelta(hours=24),
+        "retries": 5,
+        "retry_delay": timedelta(minutes=10),
+        "email": ["nikita.br@carely.group"],
+        "email_on_retry": False,
     },
 )
 
