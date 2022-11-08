@@ -185,6 +185,7 @@ dag = DAG(
         "retry_delay": timedelta(minutes=10),
         "email": ["nikita.br@carely.group"],
         "email_on_retry": False,
+        "max_active_runs": 1,
     },
 )
 
