@@ -65,7 +65,7 @@ def extract():
             return result
 
 
-def transform(extract_data: List(dict)) -> pd.DataFrame:
+def transform(extract_data: List[dict]) -> pd.DataFrame:
     """
     1. Из полученного JSON убирается уровень fields
     2. Колонки приводятся к транслитиральным именованиям, так как наименование столбца в PostgreSQL это максимум 32 символа
