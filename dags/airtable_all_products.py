@@ -180,7 +180,7 @@ dag = DAG(
     default_args={
         "on_failure_callback": on_failure_callback,
         "owner": "Brovko.NS",
-        "sla": timedelta(hours=24),
+        "sla": timedelta(hours=1),
         "retries": 5,
         "retry_delay": timedelta(minutes=10),
         "email": ["nikita.br@carely.group"],
