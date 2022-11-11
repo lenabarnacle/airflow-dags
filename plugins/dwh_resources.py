@@ -1,5 +1,10 @@
+import json
+
 from airflow.hooks.base import BaseHook
 
+import boto3
+from botocore import client
+from botocore.config import Config
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 
@@ -50,3 +55,25 @@ def get_postgres_engine(connection_id: str) -> Engine:
     )
 
     return engine
+
+
+def get_s3_client(connection_id: str) -> client.BaseClient:
+    """
+    Подготовка клиента S3
+    """
+
+    connection = BaseHook.get_connection(connection_id)
+    if connection.conn_type != "aws":
+        raise Exception("Тип подключения не Amazon S3")
+
+    my_config = Config(
+        region_name="ru-central1",
+    )
+
+    return boto3.client(
+        "s3",
+        config=my_config,
+        aws_access_key_id=connection.login,
+        aws_secret_access_key=connection.password,
+        endpoint_url=json.loads(connection.extra)["endpoint_url"],
+    )
