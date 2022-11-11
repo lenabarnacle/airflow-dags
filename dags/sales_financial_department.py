@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+import numpy as np
 import pandas as pd
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
@@ -19,10 +20,9 @@ dag = DAG(
     default_args={
         "owner": "Brovko.NS",
         "sla": timedelta(minutes=15),
-        "retries": 5,
-        "retry_delay": timedelta(minutes=10),
         "email": ["nikita.br@carely.group"],
         "email_on_retry": False,
+        "email_on_failure": True,
         "max_active_runs": 1,
     },
 )
@@ -168,7 +168,8 @@ def __main__():
     6. Загрузка данных
     7. Удаляем загруженный файл из S3
     """
-    client = get_s3_client()
+
+    client = get_s3_client("LoggingS3Connection")
 
     COL_MAPPER = {
         "Наименование": "product_name",
@@ -209,7 +210,7 @@ def __main__():
     }
 
     BUCKET = "carely-upload-data"
-    FILE_PATH = "tmp_data_sales_financial_department.xlsx"
+    FILE_PATH = "/opt/airflow/tmp_data_sales_financial_department.xlsx"
 
     files_name = find_file(client, BUCKET)
     if files_name:
@@ -233,12 +234,10 @@ def __main__():
                         html_content="Наименование столбцов не соответствует заявленым",
                         cc=None,
                         bcc=None,
-                        mime_subtype="mixed",
-                        mime_charset="us_ascii",
                     )
                 # Сообщить пользователю что валидация наименования столбцов не пройдена по email, который он указал
             else:
-                df = processing(df)
+                df = processing(df, COL_MAPPER)
 
                 upload_data(df)
 
@@ -251,8 +250,6 @@ def __main__():
                         html_content="Файл успешно загружен!",
                         cc=None,
                         bcc=None,
-                        mime_subtype="mixed",
-                        mime_charset="us_ascii",
                     )
 
 

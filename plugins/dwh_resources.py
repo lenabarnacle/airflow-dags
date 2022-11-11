@@ -1,6 +1,9 @@
+import json
+
 from airflow.hooks.base import BaseHook
 
 import boto3
+from botocore import client
 from botocore.config import Config
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
@@ -67,12 +70,10 @@ def get_s3_client(connection_id: str) -> client.BaseClient:
         region_name="ru-central1",
     )
 
-    # boto3.set_stream_logger('botocore', level='DEBUG')
-
     return boto3.client(
         "s3",
         config=my_config,
         aws_access_key_id=connection.login,
         aws_secret_access_key=connection.password,
-        endpoint_url=connection.extra["endpoint_url"],
+        endpoint_url=json.loads(connection.extra)["endpoint_url"],
     )
