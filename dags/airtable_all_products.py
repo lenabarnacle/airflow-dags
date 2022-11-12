@@ -150,10 +150,16 @@ def load(transform_data: pd.DataFrame):
         },
     )
 
+    columns_str = ",".join(map(lambda col: f'"{col}"', transform_data.columns))
+
     with Session(sql_conn) as session:
         session.execute("DELETE FROM sa.airtable_all_products")
         session.execute(
-            "INSERT INTO sa.airtable_all_products SELECT * FROM sa.tmp_airtable_all_products"
+            f"""
+            INSERT INTO sa.airtable_all_products
+            ({columns_str})
+            SELECT {columns_str} FROM sa.tmp_airtable_all_products
+            """
         )
         session.execute("DROP TABLE sa.tmp_airtable_all_products")
         session.commit()
