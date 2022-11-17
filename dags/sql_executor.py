@@ -11,6 +11,7 @@ configs = Variable.get(key="sql_executor", deserialize_json=True)
 for dag_id, config in configs.items():
 
     default_args = {
+        "pool": "sql_executor",
         "owner": config["owner"],
         "on_failure_callback": on_failure_callback,
         "retries": 5,
