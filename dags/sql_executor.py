@@ -45,7 +45,11 @@ for dag_id, config in configs.items():
             Вход:
             query - SQL запрос который необходимо выполнить
             """
-            sql_conn = get_postgres_engine("DWHPostgreSQL")
+            try:
+                conn_id = config["conn_id"]
+            except KeyError:
+                conn_id = "DWHPostgreSQL_dwa"
+            sql_conn = get_postgres_engine(conn_id)
             with Session(sql_conn) as session:
                 session.execute(query)
                 session.commit()
