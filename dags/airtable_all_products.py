@@ -184,6 +184,7 @@ dag = DAG(
     start_date=datetime(2022, 11, 1),
     catchup=False,
     max_active_runs=1,
+    tags=["Airtable", "loaders"],
     default_args={
         "on_failure_callback": on_failure_callback,
         "owner": "Brovko.NS",
@@ -192,6 +193,7 @@ dag = DAG(
         "retry_delay": timedelta(minutes=10),
         "email": ["nikita.br@carely.group"],
         "email_on_retry": False,
+        "email_on_failure": True,
     },
 )
 

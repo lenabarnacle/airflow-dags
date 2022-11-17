@@ -15,6 +15,7 @@ dag = DAG(
     description="Загрузка данных по продажам от финансового департамента из S3",
     schedule_interval="*/15 * * * *",
     start_date=datetime(2022, 11, 1),
+    tags=["s3", "loaders"],
     catchup=False,
     max_active_runs=1,
     default_args={
