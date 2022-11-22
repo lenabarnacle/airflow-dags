@@ -4,7 +4,6 @@ from functools import partial
 from airflow.decorators import dag
 from airflow.operators.python_operator import PythonOperator
 from airflow.models import Variable
-from airflow.sensors.external_task_sensor import ExternalTaskSensor
 from airflow.utils.helpers import chain
 from sqlalchemy.orm import Session
 import networkx as nx
@@ -161,6 +160,8 @@ for dag_id, config in configs.items():
             raise ImportError(
                 f"В списке задач DAG({dag_id}) содержатся циклические зависимости. Циклических зависимостей быть не должно"
             )
+
+        di_graph = nx.transitive_reduction(di_graph)
 
         for edge in di_graph.edges():
             chain(
