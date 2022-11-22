@@ -84,6 +84,8 @@ def processing(df: pd.DataFrame, col_mapper) -> pd.DataFrame:
     """
     df.columns = [col_mapper[col] for col in df.columns]
 
+    df['sales_month'] = df['sales_month'].str.replace('x ','')
+
     cols = [
         "quantity",
         "costs",
