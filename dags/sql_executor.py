@@ -14,13 +14,13 @@ from dwh_resources import get_postgres_engine
 configs = Variable.get(key="sql_executor", deserialize_json=True)
 
 
-def execute_sql(query: str):
+def execute_sql(query: str, conn_id: str = None):
     """
     Процедура для выполнения SQl запроса. Открывает соединение с базой делает запрос, делает комит.
     Вход:
     query - SQL запрос который необходимо выполнить
+    conn_id - идентификатор соединения
     """
-    conn_id = config.get("conn_id")
     if not conn_id:
         conn_id = "DWHPostgreSQL_dwa"
     sql_conn = get_postgres_engine(conn_id)
@@ -151,7 +151,11 @@ for dag_id, config in configs.items():
                     "op": PythonOperator(
                         task_id=task["id"],
                         doc=task_doc,
-                        python_callable=partial(execute_sql, query=task["query"]),
+                        python_callable=partial(
+                            execute_sql,
+                            query=task["query"],
+                            conn_id=task.get("conn_id"),
+                        ),
                     ),
                 }
             )
