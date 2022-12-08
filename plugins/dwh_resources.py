@@ -1,8 +1,8 @@
 import json
 
-from airflow.hooks.base import BaseHook
-
 import boto3
+import pygsheets
+from airflow.hooks.base import BaseHook
 from botocore import client
 from botocore.config import Config
 from sqlalchemy import create_engine
@@ -77,3 +77,16 @@ def get_s3_client(connection_id: str) -> client.BaseClient:
         aws_secret_access_key=connection.password,
         endpoint_url=json.loads(connection.extra)["endpoint_url"],
     )
+
+
+def get_google_sheets_client(connection_id: str):
+    """
+    Подготовка клиента для работы с гугл таблицами
+    Вход:
+    connection_id (str) - идентификатор подключения
+    Выход:
+    Клиент для работы с гугл таблицами
+    """
+    connection = BaseHook.get_connection(connection_id)
+
+    return pygsheets.authorize(service_account_json=connection.password)
