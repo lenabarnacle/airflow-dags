@@ -10,7 +10,7 @@ from dwh_resources import get_google_sheets_client, get_postgres_engine
 dag = DAG(
     "pnl_update",
     description="Загрузка данных в гугл таблицы финансовой модели",
-    schedule_interval="*/15 * * * *",
+    schedule_interval="@daily",
     start_date=datetime(2022, 11, 1),
     catchup=False,
     max_active_runs=1,
