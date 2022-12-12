@@ -21,6 +21,18 @@ def get_api_key_airtable(connection_id: str) -> str:
     return connection.password
 
 
+def get_jira_basic_auth(connection_id: str) -> str:
+    """
+    Возвращает ключ для авторизации в API Jira
+    Вход:
+    connection_id (str) - идентификатор подключения
+    Выход:
+    str - ключ для API авторизации
+    """
+    connection = BaseHook.get_connection(connection_id)
+    return connection.login, connection.password
+
+
 def get_postgres_connection_string(connection_id: str) -> str:
     """
     Возвращает строку подключения к postgres для указанного connection_id
