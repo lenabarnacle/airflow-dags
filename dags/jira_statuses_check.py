@@ -102,7 +102,7 @@ def check_mismatches(tis_settings: pd.DataFrame) -> pd.DataFrame:
         send_email(
             to=["elena.p@carely.group"],
             subject="Статусы в sa.tis_settings не соответствуют статусам в Jira",
-            html_content=f"{len(mismatches)} mismatches found",
+            html_content=f"""Найдены несоответствия: {len(mismatches)}. Необходимо внести изменения в google-таблицу 'Сроки нахождения продуктов в статусах.'""",
             cc=None,
             bcc=None,
         )
