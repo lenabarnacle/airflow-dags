@@ -150,12 +150,14 @@ def upload_data(df: pd.DataFrame):
         method="multi",
     )
 
+    columns_str = ",".join(map(lambda col: f'"{col}"', df.columns))
+
     with Session(sql_conn) as session:
         session.execute(
             f"DELETE FROM sa.sales_financial_department WHERE sales_month IN (SELECT DISTINCT sales_month FROM sa.tmp_sales_financial_department)"
         )
         session.execute(
-            "INSERT INTO sa.sales_financial_department SELECT * FROM sa.tmp_sales_financial_department"
+            "INSERT INTO sa.sales_financial_department ({columns_str}) SELECT {columns_str} FROM sa.tmp_sales_financial_department"
         )
         session.execute("DROP TABLE sa.tmp_sales_financial_department")
         session.commit()
