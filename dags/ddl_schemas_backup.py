@@ -13,6 +13,7 @@ dag = DAG(
     start_date=datetime(2022, 11, 1),
     catchup=False,
     max_active_runs=1,
+    tags=["Administration DWH"],
     default_args={
         "on_failure_callback": on_failure_callback,
         "owner": "Brovko.NS",
