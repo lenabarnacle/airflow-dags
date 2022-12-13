@@ -138,8 +138,6 @@ def processing(df: pd.DataFrame, col_mapper) -> pd.DataFrame:
         }
     )
 
-    df = df.dropna(subset=["product_article"]).reset_index(drop=True)
-
     return df
 
 
@@ -243,26 +241,29 @@ def __main__():
                 client.download_fileobj(BUCKET, file_name, file)
 
             df = pd.read_excel(FILE_PATH, sheet_name="All sales data")
+            # Удалим строки в которых не заполнен Артикул
+            df = df.dropna(subset=["Артикул"]).reset_index(drop=True)
+
             columns_name_cheсk = validate_columns(df, COL_MAPPER)
-            # sales_month_check = validate_sales_month(df)
+            sales_month_check = validate_sales_month(df)
             try:
                 email_data = pd.read_excel(FILE_PATH, sheet_name="info")
                 email = email_data["email"][0]
             except:
                 email = None
-                # if not sales_month_check:
-                #     if email:
-                #         send_email(
-                #             to=[email],
-                #             subject=f"Отчет о загрузки файла {file_name}",
-                #             html_content="В столбце 'Месяц' не все значения содержат x перед 'Датой'",
-                #             cc=None,
-                #             bcc=None,
-                #         )
-                #         logging.warning(
-                #             f"В файле {file_name} в столбце 'Месяц' не все значения содержат x перед 'Датой'"
-                #         )
-                #         client.delete_object(Bucket=BUCKET, Key=file_name)
+            if not sales_month_check:
+                if email:
+                    send_email(
+                        to=[email],
+                        subject=f"Отчет о загрузки файла {file_name}",
+                        html_content="В столбце 'Месяц' не все значения содержат x перед 'Датой'",
+                        cc=None,
+                        bcc=None,
+                    )
+                    logging.warning(
+                        f"В файле {file_name} в столбце 'Месяц' не все значения содержат x перед 'Датой'"
+                    )
+                    client.delete_object(Bucket=BUCKET, Key=file_name)
 
                 return
             if not columns_name_cheсk:
