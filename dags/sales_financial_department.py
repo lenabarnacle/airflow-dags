@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import logging
 
 import numpy as np
 import pandas as pd
@@ -56,7 +57,7 @@ def validate_columns(df: pd.DataFrame, col_mapper: dict) -> bool:
     df - Данные из s3
     col_mapper - словарь с сопостовление названия колонок на русском и английском
     Выход:
-    True - проверку прошел, False - прошёл
+    True - проверку прошёл, False - проверку не прошёл
     """
     columns_file = set(df.columns)
     columns_target = set(col_mapper.keys())
@@ -65,6 +66,21 @@ def validate_columns(df: pd.DataFrame, col_mapper: dict) -> bool:
     diff2 = columns_target - columns_file
 
     if not (diff2 == set() and diff1 == set()):
+        return False
+
+    return True
+
+
+def validate_sales_month(df: pd.DataFrame) -> bool:
+    """
+    Проверка наличия символа x в строках столбца "Месяц"
+    Вход:
+    df - Данные из s3
+    Выход:
+    True - проверку прошёл, False - проверку не прошёл
+    """
+    check_x = df[df["Месяц"].str.contains("x")].shape[0]
+    if check_x != df.shape[0]:
         return False
 
     return True
@@ -84,7 +100,7 @@ def processing(df: pd.DataFrame, col_mapper) -> pd.DataFrame:
     """
     df.columns = [col_mapper[col] for col in df.columns]
 
-    df['sales_month'] = df['sales_month'].str.replace('x ','')
+    df["sales_month"] = df["sales_month"].str.replace("x ", "")
 
     cols = [
         "quantity",
@@ -157,7 +173,7 @@ def upload_data(df: pd.DataFrame):
             f"DELETE FROM sa.sales_financial_department WHERE sales_month IN (SELECT DISTINCT sales_month FROM sa.tmp_sales_financial_department)"
         )
         session.execute(
-            "INSERT INTO sa.sales_financial_department ({columns_str}) SELECT {columns_str} FROM sa.tmp_sales_financial_department"
+            f"INSERT INTO sa.sales_financial_department ({columns_str}) SELECT {columns_str} FROM sa.tmp_sales_financial_department"
         )
         session.execute("DROP TABLE sa.tmp_sales_financial_department")
         session.commit()
@@ -226,12 +242,29 @@ def __main__():
 
             df = pd.read_excel(FILE_PATH, sheet_name="All sales data")
             columns_name_cheсk = validate_columns(df, COL_MAPPER)
+            sales_month_check = validate_sales_month(df)
             try:
                 email_data = pd.read_excel(FILE_PATH, sheet_name="info")
                 email = email_data["email"][0]
             except:
                 email = None
+            if not sales_month_check:
+                if email:
+                    send_email(
+                        to=[email],
+                        subject=f"Отчет о загрузки файла {file_name}",
+                        html_content="В столбце 'Месяц' не все значения содержат x перед 'Датой'",
+                        cc=None,
+                        bcc=None,
+                    )
+                    logging.warning(
+                        f"В файле {file_name} в столбце 'Месяц' не все значения содержат x перед 'Датой'"
+                    )
+                    client.delete_object(Bucket=BUCKET, Key=file_name)
+
+                return
             if not columns_name_cheсk:
+                # Сообщить пользователю что валидация наименования столбцов не пройдена по email, который он указал
                 if email:
                     send_email(
                         to=[email],
@@ -240,22 +273,26 @@ def __main__():
                         cc=None,
                         bcc=None,
                     )
-                # Сообщить пользователю что валидация наименования столбцов не пройдена по email, который он указал
-            else:
-                df = processing(df, COL_MAPPER)
-
-                upload_data(df)
-
-                client.delete_object(Bucket=BUCKET, Key=file_name)
-
-                if email:
-                    send_email(
-                        to=[email],
-                        subject=f"Отчет о загрузки файла {file_name}",
-                        html_content="Файл успешно загружен!",
-                        cc=None,
-                        bcc=None,
+                    logging.warning(
+                        f"В файле {file_name} наименование столбцов не соответствует заявленым"
                     )
+                    client.delete_object(Bucket=BUCKET, Key=file_name)
+                return
+
+            df = processing(df, COL_MAPPER)
+
+            upload_data(df)
+
+            client.delete_object(Bucket=BUCKET, Key=file_name)
+
+            if email:
+                send_email(
+                    to=[email],
+                    subject=f"Отчет о загрузки файла {file_name}",
+                    html_content="Файл успешно загружен!",
+                    cc=None,
+                    bcc=None,
+                )
 
 
 main = PythonOperator(task_id="branch_task", python_callable=__main__, dag=dag)
