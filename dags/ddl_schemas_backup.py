@@ -4,6 +4,8 @@ from airflow import DAG
 from airflow.operators.docker_operator import DockerOperator
 from airflow.hooks.base import BaseHook
 
+from callbacks import on_failure_callback
+
 dag = DAG(
     "DDLBackUp",
     description="История изменений DDL схем в DWH",
@@ -12,6 +14,7 @@ dag = DAG(
     catchup=False,
     max_active_runs=1,
     default_args={
+        "on_failure_callback": on_failure_callback,
         "owner": "Brovko.NS",
         "email": ["nikita.br@carely.group"],
         "email_on_retry": False,

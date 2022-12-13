@@ -9,6 +9,7 @@ from airflow.utils.email import send_email
 from botocore import client
 from sqlalchemy.orm import Session
 
+from callbacks import on_failure_callback
 from dwh_resources import get_postgres_engine, get_s3_client
 
 dag = DAG(
@@ -20,6 +21,7 @@ dag = DAG(
     catchup=False,
     max_active_runs=1,
     default_args={
+        "on_failure_callback": on_failure_callback,
         "owner": "Brovko.NS",
         "sla": timedelta(minutes=15),
         "email": ["nikita.br@carely.group"],
