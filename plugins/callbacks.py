@@ -12,7 +12,7 @@ def on_failure_callback(context):
 Task: {context.get('task_instance').task_id}  
 DAG: {context.get('task_instance').dag_id} 
 Execution Time: {context.get('execution_date').strftime("%Y-%m-%d %H:%M:%S")}
-Exception: {context.get('exception')}
+Exception: {context.get('exception')[:250]}
             """,
     )
     return send_message.execute(context=context)

@@ -44,6 +44,8 @@ def extract():
     """
     Получить данные о всех продуктах из Airtables.
     Данные отдаются до тех пор пока в вернувшимся в ответ на запрос JSON есть параметр offset
+    Документация по API: https://airtable.com/applO9887XZHZL9Dq/api/docs#curl/table:%d0%9a%d0%b0%d1%82%d0%b0%d0%bb%d0%be%d0%b3%20%d1%82%d0%b0%d1%80%d1%8b
+    Саму таблицу можно посомтреть вот здесь: https://airtable.com/applO9887XZHZL9Dq/tblTKhEwlxwBIqiIh/viwxsrSIdqq3RZRY8?blocks=hide
     """
     result = []
 
@@ -147,6 +149,8 @@ def load(transform_data: pd.DataFrame):
             "Perechen' (Nel'zja ispol'zovat' sovmestno)": ARRAY(item_type=String),
             "Artikuly (Nel'zja ispol'zovat' sovmestno)": ARRAY(item_type=String),
             "Perechen' (Ispol'zovat' s ostorozhnost'ju)": ARRAY(item_type=String),
+            "Calculation from Штрихкод": ARRAY(item_type=String),
+            "Штрихкоды": ARRAY(item_type=String),
         },
     )
 
