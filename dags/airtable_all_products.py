@@ -149,7 +149,8 @@ def load(transform_data: pd.DataFrame):
             "Perechen' (Nel'zja ispol'zovat' sovmestno)": ARRAY(item_type=String),
             "Artikuly (Nel'zja ispol'zovat' sovmestno)": ARRAY(item_type=String),
             "Perechen' (Ispol'zovat' s ostorozhnost'ju)": ARRAY(item_type=String),
-            "Calculation (from Штрихкод)": ARRAY(item_type=String),
+            "Calculation from Штрихкод": ARRAY(item_type=String),
+            "Штрихкоды": ARRAY(item_type=String),
         },
     )
 
