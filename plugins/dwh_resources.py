@@ -7,6 +7,7 @@ from botocore import client
 from botocore.config import Config
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
+from clickhouse_driver import Client
 
 
 def get_api_key_airtable(connection_id: str) -> str:
@@ -19,6 +20,25 @@ def get_api_key_airtable(connection_id: str) -> str:
     """
     connection = BaseHook.get_connection(connection_id)
     return connection.password
+
+
+def get_clickhouse_connection(connection_id: str) -> str:
+    """
+    Возвращает клиента для подключения к БД ClickHouse
+    Вход:
+    connection_id (str) - идентификатор подключения
+    Выход:
+    client - данные для подключения
+    """
+    connection = BaseHook.get_connection(connection_id)
+
+    client = Client(host=connection.host,
+                    user=connection.login,
+                    password=connection.password,
+                    database=connection.schema,
+                    secure=True)
+
+    return client
 
 
 def get_postgres_connection_string(connection_id: str) -> str:
