@@ -20,6 +20,7 @@ dag = DAG(
     "SolarSuffRefreshJWT",
     description="Обновления JWT для авторизации в solar stuff",
     doc_md=doc_md,
+    tags=["solar-stuff"],
     schedule_interval="*/15 * * * *",
     start_date=datetime(2022, 11, 1),
     catchup=False,

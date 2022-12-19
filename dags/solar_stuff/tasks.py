@@ -22,6 +22,7 @@ dag = DAG(
     "SolarSuffTasks",
     description="Получения заданий из SolarSuff",
     doc_md=doc_md,
+    tags=["loaders", "solar-stuff"],
     schedule_interval="@daily",
     start_date=datetime(2022, 11, 1),
     catchup=False,
