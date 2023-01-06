@@ -16,7 +16,7 @@ dag = DAG(
     max_active_runs=1,
     tags=["Airtable", "loaders"],
     default_args={
-        # "on_failure_callback": on_failure_callback,
+        "on_failure_callback": on_failure_callback,
         "owner": "Brovko.NS",
         "email": ["nikita.br@carely.group"],
         "email_on_retry": False,
