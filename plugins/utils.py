@@ -1,6 +1,6 @@
 import os
 from os.path import abspath, dirname, join
-from typing import List, Optional
+from typing import List
 
 from airflow.utils.email import send_email
 import pandas as pd
@@ -12,8 +12,8 @@ def send_df_by_email(
     to: List[str],
     subject: str,
     html_content: str,
-    cc: Optional(List[str]) = None,
-    bcc: Optional(List[str]) = None,
+    cc: List[str] = None,
+    bcc: List[str] = None,
 ):
     """Отправить pd.DataFrame по почте
 
@@ -23,8 +23,8 @@ def send_df_by_email(
         to (List[str]): Список получаталей
         subject (str): Тема письма
         html_content (str): HTML контент письма
-        cc (Optional, optional): Адресаты в копии в письме. Defaults to None.
-        bcc (Optional, optional): Адресаты в скрытой копии в письме. Defaults to None.
+        cc (List[str], optional): Адресаты в копии в письме. Defaults to None.
+        bcc (List[str], optional): Адресаты в скрытой копии в письме. Defaults to None.
     """
     base_path = dirname(abspath(__file__))
     file_path = join(base_path, file_name)
