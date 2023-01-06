@@ -1,9 +1,9 @@
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
-from airflow.utils.email import send_email
 
 from callbacks import on_failure_callback
 from dwh_resources import get_postgres_engine, get_jira_basic_auth
+from utils import send_df_by_email
 
 from datetime import datetime, timedelta
 from requests.auth import HTTPBasicAuth
@@ -101,12 +101,12 @@ def check_mismatches(tis_settings: pd.DataFrame) -> pd.DataFrame:
     ].reset_index(drop=True)
 
     if len(mismatches) > 0:
-        send_email(
+        send_df_by_email(
             to=["elena.p@carely.group"],
             subject="Статусы в sa.tis_settings не соответствуют статусам в Jira",
             html_content=f"""Найдены несоответствия: {len(mismatches)}. Необходимо внести изменения в google-таблицу 'Сроки нахождения продуктов в статусах.'""",
-            cc=None,
-            bcc=None,
+            df=mismatches,
+            file_name="Несоответствие.xlsx",
         )
 
     return
