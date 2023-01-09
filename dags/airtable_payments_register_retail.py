@@ -34,7 +34,7 @@ def get_environment():
     return {
         "LOG_LEVEL": "INFO",
         "DB_URL": db_url,
-        "DB_TABLE_NAME": "airtable_all_products",
+        "DB_TABLE_NAME": "airtable_payments_register_retail",
         "DB_SCHEMA_NAME": "sa",
         "AIRTABLE_TOKEN": get_api_key_airtable("Airtable"),
         "AIRTABLE_BASE_ID": "appJcsehQlbs4c8L2",
