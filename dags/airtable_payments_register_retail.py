@@ -44,7 +44,7 @@ def get_environment():
 
 task = DockerOperator(
     dag=dag,
-    task_id="AirtableAllProducts",
+    task_id="MainTask",
     docker_conn_id="CarelyRegistry",
     image="registry.gitlab.com/urbnvape/loaders/airtable",
     api_version="auto",
