@@ -2,6 +2,7 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.email import send_email
 
+from callbacks import on_failure_callback
 from dwh_resources import get_postgres_engine, get_jira_basic_auth
 
 from datetime import datetime, timedelta
@@ -20,6 +21,7 @@ dag = DAG(
     catchup=False,
     max_active_runs=1,
     default_args={
+        "on_failure_callback": on_failure_callback,
         "owner": "Pindiurina.EP",
         "sla": timedelta(hours=2),
         "email": ["elena.p@carely.group"],
