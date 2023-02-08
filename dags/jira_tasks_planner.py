@@ -21,7 +21,7 @@ dag = DAG(
     max_active_runs=1,
     default_args={
         "owner": "Pindiurina.EP",
-        "sla": timedelta(minutes=15),
+        "sla": timedelta(hours=2),
         "email": ["elena.p@carely.group"],
         "email_on_retry": False,
         "email_on_failure": True,
