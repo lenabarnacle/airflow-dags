@@ -1,7 +1,3 @@
-# Даги Airflow
+## simple_airflow_dags
 
-Репозиторий с Airflow-дагами. Код из `master` ветки синхронизируется с Airflow автоматически.
-
-Описание содержимого директорий:
-- `dags` — даги
-- `plugins` — общий код, доступный для импорта в дагах
+Some examples of many Airflow DAGs I've created.
